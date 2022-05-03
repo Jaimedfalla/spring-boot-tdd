@@ -43,11 +43,9 @@ public class WeatherReportController
         return weatherService.findNearLocation( query.getGeoLocation(), query.getDistanceRangeInMeters() );
     }
 
-    @GetMapping( "reporter/{id}" )
+    @GetMapping( "reporter/{name}" )
     public List<WeatherReport> findByReporterId( @PathVariable String name )
     {
-        return weatherService.findWeatherReportsByName( name );
+        return weatherService.findWeatherReportsByName(name);
     }
-
-
 }

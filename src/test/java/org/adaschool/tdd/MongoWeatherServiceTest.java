@@ -1,14 +1,13 @@
 package org.adaschool.tdd;
 
-import org.adaschool.tdd.controller.weather.dto.WeatherReportDto;
 import org.adaschool.tdd.exception.WeatherReportNotFoundException;
+import org.adaschool.tdd.fakedata.FakeWhetherRequest;
 import org.adaschool.tdd.repository.WeatherReportRepository;
 import org.adaschool.tdd.repository.document.GeoLocation;
 import org.adaschool.tdd.repository.document.WeatherReport;
 import org.adaschool.tdd.service.MongoWeatherService;
 import org.adaschool.tdd.service.WeatherService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
@@ -30,26 +29,18 @@ class MongoWeatherServiceTest
     @Mock
     WeatherReportRepository repository;
 
-    @BeforeAll()
-    public void setup()
-    {
-        weatherService = new MongoWeatherService( repository );
-    }
-
     @Test
     void createWeatherReportCallsSaveOnRepository()
     {
-        double lat = 4.7110;
-        double lng = 74.0721;
-        GeoLocation location = new GeoLocation( lat, lng );
-        WeatherReportDto weatherReportDto = new WeatherReportDto( location, 35f, 22f, "tester", new Date() );
-        weatherService.report( weatherReportDto );
+        weatherService = new MongoWeatherService( repository );
+        weatherService.report(FakeWhetherRequest.getRequestWeatherDto() );
         verify( repository ).save( any( WeatherReport.class ) );
     }
 
     @Test
     void weatherReportIdFoundTest()
     {
+        weatherService = new MongoWeatherService( repository );
         String weatherReportId = "awae-asd45-1dsad";
         double lat = 4.7110;
         double lng = 74.0721;
@@ -63,6 +54,8 @@ class MongoWeatherServiceTest
     @Test
     void weatherReportIdNotFoundTest()
     {
+
+        weatherService = new MongoWeatherService( repository );
         String weatherReportId = "dsawe1fasdasdoooq123";
         when( repository.findById( weatherReportId ) ).thenReturn( Optional.empty() );
         Assertions.assertThrows( WeatherReportNotFoundException.class, () -> {
